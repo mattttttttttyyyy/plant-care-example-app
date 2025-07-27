@@ -9,6 +9,9 @@ class Plant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(100), nullable=False)
     latin_name = db.Column(db.String(200))
+    english_name = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    care_instructions = db.Column(db.Text)
     image_path = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -21,6 +24,9 @@ class Plant(db.Model):
             'id': self.id,
             'nickname': self.nickname,
             'latin_name': self.latin_name,
+            'english_name': self.english_name,
+            'description': self.description,
+            'care_instructions': self.care_instructions,
             'image_path': self.image_path,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
