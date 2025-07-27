@@ -1,15 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PlantList from './components/PlantList';
 import PlantDetail from './components/PlantDetail';
 
 function App() {
   return (
     <Router>
-      <Switch>
-        <Route path="/" exact component={PlantList} />
-        <Route path="/plant/:id" component={PlantDetail} />
-      </Switch>
+      <Routes>
+        <Route path="/" element={<PlantList />} />
+        <Route path="/plant/:id" element={<PlantDetail />} />
+      </Routes>
     </Router>
   );
 }

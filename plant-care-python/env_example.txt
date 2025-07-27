@@ -1,0 +1,8 @@
+# OpenAI API Key (required for chat functionality)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Flask Secret Key (change in production)
+SECRET_KEY=your_secret_key_here
+
+# Environment (development/production)
+FLASK_ENV=development 

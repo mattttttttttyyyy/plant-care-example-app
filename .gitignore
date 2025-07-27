@@ -1,57 +1,10 @@
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
-
-# Maven
+HELP.md
 target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Gradle
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-# IntelliJ IDEA
-.idea/
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-# Eclipse
+### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -59,120 +12,167 @@ out/
 .settings
 .springBeans
 .sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
-# NetBeans
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# VS Code
+### VS Code ###
 .vscode/
 
-# Mac
+### Python ###
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+### PyCharm ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### Virtual Environment ###
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+### Jupyter Notebook ###
+.ipynb_checkpoints
+
+### pyenv ###
+.python-version
+
+### pipenv ###
+Pipfile.lock
+
+### PEP 582 ###
+__pypackages__/
+
+### Celery ###
+celerybeat-schedule
+celerybeat.pid
+
+### SageMath parsed files ###
+*.sage.py
+
+### Spyder project settings ###
+.spyderproject
+.spyproject
+
+### Rope project settings ###
+.ropeproject
+
+### mkdocs documentation ###
+/site
+
+### mypy ###
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+### Pyre type checker ###
+.pyre/
+
+### Environment Variables and API Keys ###
+.env
+application-local.properties
+application-prod.properties
+*.key
+*.pem
+
+### Database Files ###
+*.db
+*.h2.db
+data/
+plant_care.db
+
+### Logs ###
+*.log
+logs/
+
+### Uploads ###
+uploads/
+uploads-test/
+static/images/
+
+### OS Generated Files ###
 .DS_Store
-
-# Windows
-Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 ehthumbs.db
-Desktop.ini
+Thumbs.db
 
-# Linux
-*~
+### Frontend Binary Files ###
+*.bin
+*.exe
+*.dll
+*.so
+*.dylib
+*.app
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.msi
+*.zip
+*.tar.gz
+*.tar.bz2
+*.7z
+*.rar
 
-# Node.js (for React frontend)
+### Node.js ###
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .npm
-.eslintcache
+.yarn-integrity
+.pnp.*
 
-# React build files
+### React Build Files ###
 frontend/build/
 frontend/dist/
+frontend/.cache/
+frontend/coverage/
+frontend/.nyc_output/
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Application specific
-uploads/
-images/
-*.db
-*.sqlite
-
-# Spring Boot specific
-application-local.properties
-application-dev.properties
-application-prod.properties
-
-# Logs
-logs/
-*.log
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
+### Package Manager Files ###
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
