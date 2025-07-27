@@ -1,0 +1,11 @@
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plant_care/PlantCareAppApplication.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/chat/ChatController.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/chat/ChatHistory.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/chat/OpenAIService.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/config/FileStorageProperties.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/image/ImageController.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/image/ImageStorageService.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/plant/Plant.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/plant/PlantController.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/plant/PlantRepository.java
+/Users/mateuszg/projekty/plant-care-all/plant-care/src/main/java/com/practice/plantcare/plant/PlantService.java
