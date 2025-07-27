@@ -3,9 +3,18 @@ import axios from 'axios';
 
 const PlantList = () => {
     const [plants, setPlants] = useState([]);
-    const [newPlant, setNewPlant] = useState({ nickname: '', latin_name: '' });
+    const [newPlant, setNewPlant] = useState({ 
+        nickname: '', 
+        latin_name: '', 
+        english_name: '', 
+        description: '', 
+        care_instructions: '' 
+    });
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isAddingPlant, setIsAddingPlant] = useState(false);
 
     useEffect(() => {
         fetchPlants();
@@ -25,20 +34,85 @@ const PlantList = () => {
         }
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Check file size (16MB limit)
+            if (file.size > 16 * 1024 * 1024) {
+                alert('Image size must be less than 16MB');
+                return;
+            }
+            
+            // Check file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please select a valid image file (JPEG, PNG, GIF)');
+                return;
+            }
+            
+            setSelectedImage(file);
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const clearImage = () => {
+        setSelectedImage(null);
+        setImagePreview(null);
+    };
+
     const addPlant = async () => {
         if (!newPlant.nickname.trim()) {
             alert('Please enter a plant nickname');
             return;
         }
 
+        setIsAddingPlant(true);
+        setError(null);
+
         try {
-            const response = await axios.post('/api/plants', newPlant);
+            let response;
+            
+            if (selectedImage) {
+                // Use FormData for multipart upload with image
+                const formData = new FormData();
+                formData.append('nickname', newPlant.nickname);
+                formData.append('latin_name', newPlant.latin_name);
+                formData.append('english_name', newPlant.english_name);
+                formData.append('description', newPlant.description);
+                formData.append('care_instructions', newPlant.care_instructions);
+                formData.append('image', selectedImage);
+                
+                response = await axios.post('/api/plants', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            } else {
+                // Use JSON for text-only data
+                response = await axios.post('/api/plants', newPlant);
+            }
+            
             setPlants([...plants, response.data]);
-            setNewPlant({ nickname: '', latin_name: '' });
+            setNewPlant({ 
+                nickname: '', 
+                latin_name: '', 
+                english_name: '', 
+                description: '', 
+                care_instructions: '' 
+            });
+            clearImage();
             setError(null);
         } catch (error) {
             console.error('Error adding plant:', error);
-            setError('Failed to add plant');
+            setError('Failed to add plant: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setIsAddingPlant(false);
         }
     };
 
@@ -68,7 +142,7 @@ const PlantList = () => {
     }
 
     return (
-        <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
             <h1 style={{ color: '#2c3e50', marginBottom: '30px' }}>🌱 Plant Care</h1>
             
             {error && (
@@ -90,47 +164,164 @@ const PlantList = () => {
                 marginBottom: '30px'
             }}>
                 <h3>Add New Plant</h3>
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                
+                {/* Image Upload Section */}
+                <div style={{ marginBottom: '20px' }}>
+                    <label style={{ 
+                        display: 'block', 
+                        marginBottom: '10px', 
+                        fontWeight: 'bold',
+                        color: '#495057'
+                    }}>
+                        Plant Image (Optional - AI will analyze and identify your plant)
+                    </label>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <input
+                            type="file"
+                            onChange={handleImageChange}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            id="plant-image-input"
+                        />
+                        <label htmlFor="plant-image-input" style={{ 
+                            padding: '10px 16px', 
+                            backgroundColor: '#007bff', 
+                            color: 'white', 
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            display: 'inline-block'
+                        }}>
+                            📷 Choose Image
+                        </label>
+                        {selectedImage && (
+                            <button 
+                                onClick={clearImage}
+                                style={{ 
+                                    padding: '8px 12px', 
+                                    backgroundColor: '#6c757d', 
+                                    color: 'white', 
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Clear
+                            </button>
+                        )}
+                    </div>
+                    {imagePreview && (
+                        <div style={{ marginTop: '10px' }}>
+                            <img 
+                                src={imagePreview} 
+                                alt="Preview" 
+                                style={{ 
+                                    maxWidth: '200px', 
+                                    maxHeight: '200px', 
+                                    borderRadius: '4px',
+                                    border: '1px solid #ddd'
+                                }}
+                            />
+                            <p style={{ margin: '5px 0 0 0', fontSize: '12px', color: '#6c757d' }}>
+                                {selectedImage?.name}
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Plant Information Form */}
+                <div style={{ display: 'grid', gap: '15px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                        <input
+                            type="text"
+                            placeholder="Plant nickname *"
+                            value={newPlant.nickname}
+                            onChange={e => setNewPlant({ ...newPlant, nickname: e.target.value })}
+                            onKeyPress={handleKeyPress}
+                            style={{ 
+                                padding: '8px', 
+                                border: '1px solid #ddd',
+                                borderRadius: '4px'
+                            }}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Latin name (optional)"
+                            value={newPlant.latin_name}
+                            onChange={e => setNewPlant({ ...newPlant, latin_name: e.target.value })}
+                            onKeyPress={handleKeyPress}
+                            style={{ 
+                                padding: '8px', 
+                                border: '1px solid #ddd',
+                                borderRadius: '4px'
+                            }}
+                        />
+                    </div>
+                    
                     <input
                         type="text"
-                        placeholder="Plant nickname"
-                        value={newPlant.nickname}
-                        onChange={e => setNewPlant({ ...newPlant, nickname: e.target.value })}
+                        placeholder="English name (optional)"
+                        value={newPlant.english_name}
+                        onChange={e => setNewPlant({ ...newPlant, english_name: e.target.value })}
                         onKeyPress={handleKeyPress}
                         style={{ 
-                            flex: 1, 
                             padding: '8px', 
                             border: '1px solid #ddd',
                             borderRadius: '4px'
                         }}
                     />
-                    <input
-                        type="text"
-                        placeholder="Latin name (optional)"
-                        value={newPlant.latin_name}
-                        onChange={e => setNewPlant({ ...newPlant, latin_name: e.target.value })}
-                        onKeyPress={handleKeyPress}
+                    
+                    <textarea
+                        placeholder="Description (optional)"
+                        value={newPlant.description}
+                        onChange={e => setNewPlant({ ...newPlant, description: e.target.value })}
+                        rows="3"
                         style={{ 
-                            flex: 1, 
                             padding: '8px', 
                             border: '1px solid #ddd',
-                            borderRadius: '4px'
+                            borderRadius: '4px',
+                            resize: 'vertical'
                         }}
                     />
+                    
+                    <textarea
+                        placeholder="Care instructions (optional)"
+                        value={newPlant.care_instructions}
+                        onChange={e => setNewPlant({ ...newPlant, care_instructions: e.target.value })}
+                        rows="3"
+                        style={{ 
+                            padding: '8px', 
+                            border: '1px solid #ddd',
+                            borderRadius: '4px',
+                            resize: 'vertical'
+                        }}
+                    />
+                    
                     <button 
                         onClick={addPlant}
-                        disabled={!newPlant.nickname.trim()}
+                        disabled={!newPlant.nickname.trim() || isAddingPlant}
                         style={{ 
-                            padding: '8px 16px', 
-                            backgroundColor: '#28a745', 
+                            padding: '12px 16px', 
+                            backgroundColor: newPlant.nickname.trim() && !isAddingPlant ? '#28a745' : '#6c757d', 
                             color: 'white', 
                             border: 'none',
                             borderRadius: '4px',
-                            cursor: newPlant.nickname.trim() ? 'pointer' : 'not-allowed'
+                            cursor: newPlant.nickname.trim() && !isAddingPlant ? 'pointer' : 'not-allowed',
+                            fontSize: '16px'
                         }}
                     >
-                        Add Plant
+                        {isAddingPlant ? 'Adding Plant...' : 'Add Plant'}
                     </button>
+                </div>
+                
+                <div style={{ 
+                    marginTop: '15px', 
+                    padding: '10px', 
+                    backgroundColor: '#e7f3ff', 
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    color: '#0056b3'
+                }}>
+                    💡 <strong>Tip:</strong> Upload an image of your plant and AI will automatically identify it and fill in the details for you!
                 </div>
             </div>
             
@@ -147,67 +338,133 @@ const PlantList = () => {
                         No plants yet. Add your first plant above!
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gap: '15px' }}>
+                    <div style={{ display: 'grid', gap: '20px' }}>
                         {plants.map(plant => (
                             <div key={plant.id} style={{ 
                                 border: '1px solid #ddd', 
-                                padding: '15px', 
+                                padding: '20px', 
                                 borderRadius: '8px',
                                 backgroundColor: 'white',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                             }}>
-                                <div>
-                                    <h4 style={{ margin: '0 0 5px 0', color: '#2c3e50' }}>
-                                        {plant.nickname}
-                                    </h4>
-                                    {plant.latin_name && (
-                                        <p style={{ 
-                                            margin: '0', 
-                                            color: '#6c757d', 
-                                            fontStyle: 'italic',
-                                            fontSize: '14px'
-                                        }}>
-                                            {plant.latin_name}
-                                        </p>
+                                <div style={{ display: 'flex', gap: '20px' }}>
+                                    {/* Plant Image */}
+                                    {plant.image_path && (
+                                        <div style={{ flexShrink: 0 }}>
+                                            <img 
+                                                src={`/api/images/${plant.image_path}`} 
+                                                alt={plant.nickname}
+                                                style={{ 
+                                                    width: '120px', 
+                                                    height: '120px', 
+                                                    objectFit: 'cover',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #eee'
+                                                }}
+                                            />
+                                        </div>
                                     )}
-                                    <p style={{ 
-                                        margin: '5px 0 0 0', 
-                                        fontSize: '12px', 
-                                        color: '#6c757d' 
-                                    }}>
-                                        Added: {new Date(plant.created_at).toLocaleDateString()}
-                                    </p>
-                                </div>
-                                <div style={{ display: 'flex', gap: '10px' }}>
-                                    <a 
-                                        href={`/plant/${plant.id}`}
-                                        style={{ 
-                                            padding: '6px 12px', 
-                                            backgroundColor: '#007bff', 
-                                            color: 'white', 
-                                            textDecoration: 'none',
-                                            borderRadius: '4px',
-                                            fontSize: '14px'
-                                        }}
-                                    >
-                                        Chat
-                                    </a>
-                                    <button 
-                                        onClick={() => removePlant(plant.id)}
-                                        style={{ 
-                                            padding: '6px 12px', 
-                                            backgroundColor: '#dc3545', 
-                                            color: 'white', 
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                            fontSize: '14px'
-                                        }}
-                                    >
-                                        Delete
-                                    </button>
+                                    
+                                    {/* Plant Information */}
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                                            <div>
+                                                <h4 style={{ margin: '0 0 5px 0', color: '#2c3e50', fontSize: '18px' }}>
+                                                    {plant.nickname}
+                                                </h4>
+                                                {plant.latin_name && (
+                                                    <p style={{ 
+                                                        margin: '0 0 5px 0', 
+                                                        color: '#6c757d', 
+                                                        fontStyle: 'italic',
+                                                        fontSize: '14px'
+                                                    }}>
+                                                        {plant.latin_name}
+                                                    </p>
+                                                )}
+                                                {plant.english_name && (
+                                                    <p style={{ 
+                                                        margin: '0 0 5px 0', 
+                                                        color: '#495057',
+                                                        fontSize: '14px'
+                                                    }}>
+                                                        {plant.english_name}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '10px' }}>
+                                                <a 
+                                                    href={`/plant/${plant.id}`}
+                                                    style={{ 
+                                                        padding: '8px 16px', 
+                                                        backgroundColor: '#007bff', 
+                                                        color: 'white', 
+                                                        textDecoration: 'none',
+                                                        borderRadius: '4px',
+                                                        fontSize: '14px'
+                                                    }}
+                                                >
+                                                    Chat
+                                                </a>
+                                                <button 
+                                                    onClick={() => removePlant(plant.id)}
+                                                    style={{ 
+                                                        padding: '8px 16px', 
+                                                        backgroundColor: '#dc3545', 
+                                                        color: 'white', 
+                                                        border: 'none',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '14px'
+                                                    }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Plant Description */}
+                                        {plant.description && (
+                                            <div style={{ marginBottom: '10px' }}>
+                                                <p style={{ 
+                                                    margin: '0', 
+                                                    color: '#495057',
+                                                    fontSize: '14px',
+                                                    lineHeight: '1.4'
+                                                }}>
+                                                    {plant.description}
+                                                </p>
+                                            </div>
+                                        )}
+                                        
+                                        {/* Care Instructions */}
+                                        {plant.care_instructions && (
+                                            <div style={{ 
+                                                backgroundColor: '#f8f9fa', 
+                                                padding: '10px', 
+                                                borderRadius: '4px',
+                                                marginBottom: '10px'
+                                            }}>
+                                                <strong style={{ color: '#495057', fontSize: '14px' }}>Care Instructions:</strong>
+                                                <p style={{ 
+                                                    margin: '5px 0 0 0', 
+                                                    color: '#495057',
+                                                    fontSize: '14px',
+                                                    lineHeight: '1.4'
+                                                }}>
+                                                    {plant.care_instructions}
+                                                </p>
+                                            </div>
+                                        )}
+                                        
+                                        <p style={{ 
+                                            margin: '10px 0 0 0', 
+                                            fontSize: '12px', 
+                                            color: '#6c757d' 
+                                        }}>
+                                            Added: {new Date(plant.created_at).toLocaleDateString()}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         ))}
