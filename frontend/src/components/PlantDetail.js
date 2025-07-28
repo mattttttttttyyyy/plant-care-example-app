@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 
 const PlantDetail = () => {
     const { id } = useParams();
@@ -297,14 +298,66 @@ const PlantDetail = () => {
                                             }}>
                                                 {item.role === 'user' ? 'You' : 'AI Assistant'}
                                             </strong>
-                                            <p style={{ 
+                                            <div style={{ 
                                                 margin: '5px 0 0 0', 
                                                 color: '#495057',
                                                 fontSize: '14px',
                                                 lineHeight: '1.4'
                                             }}>
-                                                {item.content}
-                                            </p>
+                                                {item.role === 'user' ? (
+                                                    <p style={{ margin: 0 }}>{item.content}</p>
+                                                ) : (
+                                                    <ReactMarkdown 
+                                                        components={{
+                                                            p: ({children}) => <p style={{margin: '0 0 8px 0'}}>{children}</p>,
+                                                            strong: ({children}) => <strong style={{color: '#2c3e50'}}>{children}</strong>,
+                                                            em: ({children}) => <em style={{color: '#495057'}}>{children}</em>,
+                                                            h1: ({children}) => <h1 style={{fontSize: '18px', margin: '16px 0 8px 0', color: '#2c3e50'}}>{children}</h1>,
+                                                            h2: ({children}) => <h2 style={{fontSize: '16px', margin: '14px 0 6px 0', color: '#2c3e50'}}>{children}</h2>,
+                                                            h3: ({children}) => <h3 style={{fontSize: '15px', margin: '12px 0 6px 0', color: '#2c3e50'}}>{children}</h3>,
+                                                            ul: ({children}) => <ul style={{margin: '8px 0', paddingLeft: '20px'}}>{children}</ul>,
+                                                            ol: ({children}) => <ol style={{margin: '8px 0', paddingLeft: '20px'}}>{children}</ol>,
+                                                            li: ({children}) => <li style={{margin: '4px 0'}}>{children}</li>,
+                                                            blockquote: ({children}) => (
+                                                                <blockquote style={{
+                                                                    borderLeft: '3px solid #007bff',
+                                                                    margin: '8px 0',
+                                                                    paddingLeft: '12px',
+                                                                    fontStyle: 'italic',
+                                                                    color: '#495057'
+                                                                }}>
+                                                                    {children}
+                                                                </blockquote>
+                                                            ),
+                                                            code: ({children}) => (
+                                                                <code style={{
+                                                                    backgroundColor: '#f8f9fa',
+                                                                    padding: '2px 4px',
+                                                                    borderRadius: '3px',
+                                                                    fontFamily: 'monospace',
+                                                                    fontSize: '13px'
+                                                                }}>
+                                                                    {children}
+                                                                </code>
+                                                            ),
+                                                            pre: ({children}) => (
+                                                                <pre style={{
+                                                                    backgroundColor: '#f8f9fa',
+                                                                    padding: '8px',
+                                                                    borderRadius: '4px',
+                                                                    overflow: 'auto',
+                                                                    fontSize: '13px',
+                                                                    margin: '8px 0'
+                                                                }}>
+                                                                    {children}
+                                                                </pre>
+                                                            )
+                                                        }}
+                                                    >
+                                                        {item.content}
+                                                    </ReactMarkdown>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
